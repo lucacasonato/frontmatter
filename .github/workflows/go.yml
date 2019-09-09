@@ -1,0 +1,31 @@
+name: Go
+on: [push]
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go 1.13
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.13
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v1
+
+      - name: Get dependencies
+        run: |
+          go mod download
+
+      - name: Test
+        run: go test -coverprofile=coverage.out
+
+      - name: Generate coverage output
+        run: go tool cover -html=coverage.out -o cover.html
+
+      - name: Upload coverage output
+        uses: actions/upload-artifact@master
+        with:
+          name: coverage
+          path: cover.html
